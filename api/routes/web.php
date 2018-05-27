@@ -12,8 +12,7 @@
 */
 
 use Psr\Http\Message\ServerRequestInterface;
-use Semux\Client\Configuration as SemuxClientConfig;
-use Semux\Client\Api\SemuxApi as SemuxApi;
+use Semux\Client\Api\SemuxApi;
 
 $router->get('/', function () use ($router) {
 	return "Hello Semux!";
@@ -24,20 +23,19 @@ $router->group(['prefix' => 'api'], function() use ($router) {
 		return response()->json(['version' => "1.2.0"]);
 	});
 
-	$router->get('/circulating-supply', function (ServerRequestInterface $request) use ($router) {
-		$latestBlockNumber = getApi()->getLatestBlockNumber()->getResult();
-		$blockRewards = gmp_mul($latestBlockNumber, 3);
-		return (string) gmp_add($blockRewards, "25000000");
+	$router->get('/circulating-supply', function (ServerRequestInterface $request, SemuxApi $api) use ($router) {
+		$latestBlockNumber = $api->getLatestBlockNumber()->getResult();
+		$blockRewards = bcmul($latestBlockNumber, 3);
+
+		$delegates = $api->getDelegates()->getResult();
+		$burnedCoins = bcmul(sizeof($delegates), "1000");
+
+		$premine = "25000000";
+
+		return bcsub(bcadd($blockRewards, $premine), $burnedCoins);
 	});
 
 	$router->get('/total-supply', function () use ($router) {
 		return "100000000";
 	});
 });
-
-function getApi() {
-	$config = new SemuxClientConfig();
-	$config->setHost('https://semux.io/api/semux/v2.1.0')->setUsername('user')->setPassword('pass');
-	$api = new SemuxApi(new GuzzleHttp\Client(), $config);
-	return $api;
-}
