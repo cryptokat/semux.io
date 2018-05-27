@@ -10,7 +10,8 @@
         "vlucas/phpdotenv": "~2.2",
         "semuxproject/semux-php-sdk": "^1.2",
         "symfony/psr-http-message-bridge": "^1.0",
-        "zendframework/zend-diactoros": "^1.7"
+        "zendframework/zend-diactoros": "^1.7",
+        "ext-bcmath": "^7.0"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
