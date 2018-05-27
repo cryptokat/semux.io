@@ -26,7 +26,10 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->singleton(SemuxApi::class, function ($app) {
             $config = new SemuxClientConfig();
-            $config->setHost('https://semux.io/api/semux/v2.1.0');
+            $config
+                ->setHost(env('SEMUX_API'))
+                ->setUsername(env('SEMUX_API_USER'))
+                ->setPassword(env('SEMUX_API_PASS'));
             $api = new SemuxApi(new \GuzzleHttp\Client(), $config);
             return $api;
         });
