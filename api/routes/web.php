@@ -24,6 +24,18 @@ $router->group(['prefix' => 'api'], function() use ($router) {
 		return response()->json(['version' => "1.2.0"]);
 	});
 
+    $router->get('/info', function (SemuxApi $api) use ($router) {
+        $info = $api->getInfo()->getResult();
+        return response()->json([
+            'network' => $info->getNetwork(),
+            'capabilities' => $info->getCapabilities(),
+            'latestBlockNumber' => $info->getLatestBlockNumber(),
+            'latestBlockHash' => $info->getLatestBlockHash(),
+            'activePeers' => $info->getActivePeers(),
+            'pendingTransactions' => $info->getPendingTransactions()
+        ]);
+    });
+
 	// provided for crypto trackers
 	$router->get('/circulating-supply', function (SemuxApi $api) use ($router) {
 		$latestBlockNumber = $api->getLatestBlockNumber()->getResult();
