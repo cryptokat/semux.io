@@ -99,4 +99,23 @@ $app->router->group([
     require __DIR__.'/../routes/web.php';
 });
 
+/*
+|--------------------------------------------------------------------------
+| Custom Configure Monolog
+|--------------------------------------------------------------------------
+|
+*/
+
+$app->configureMonologUsing(function (\Monolog\Logger $logger) {
+    $maxFiles = env('APP_MAX_LOG_FILE', 90);
+    $filename = storage_path('logs/lumen.log');
+    $handler = new \Monolog\Handler\RotatingFileHandler($filename, $maxFiles);
+    $handler->setFilenameFormat('{date}-{filename}', 'Y-m-d');
+    $formatter = new \Monolog\Formatter\LineFormatter(null, null, true, true);
+    $handler->setFormatter($formatter);
+    $logger->pushHandler($handler);
+
+    return $logger;
+});
+
 return $app;
