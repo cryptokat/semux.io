@@ -16,13 +16,13 @@ use Illuminate\Contracts\Cache\Repository as Cache;
 use Semux\Client\Api\SemuxApi;
 
 $router->get('/', function () use ($router) {
-	return "Hello Semux!";
+    return "Hello Semux!";
 });
 
-$router->group(['prefix' => 'api'], function() use ($router) {
-	$router->get('/', function () use ($router) {
-		return response()->json(['version' => "1.2.0"]);
-	});
+$router->group(['prefix' => 'api'], function () use ($router) {
+    $router->get('/', function () use ($router) {
+        return response()->json(['version' => "1.2.0"]);
+    });
 
     $router->get('/info', function (SemuxApi $api) use ($router) {
         $info = $api->getInfo()->getResult();
@@ -36,18 +36,18 @@ $router->group(['prefix' => 'api'], function() use ($router) {
         ]);
     });
 
-	// provided for crypto trackers
-	$router->get('/circulating-supply', function (SemuxApi $api) use ($router) {
-		$latestBlockNumber = $api->getLatestBlockNumber()->getResult();
-		$blockRewardsSEM = bcmul($latestBlockNumber, 3);
+    // provided for crypto trackers
+    $router->get('/circulating-supply', function (SemuxApi $api) use ($router) {
+        $latestBlockNumber = $api->getLatestBlockNumber()->getResult();
+        $blockRewardsSEM = bcmul($latestBlockNumber, 3);
 
-		$delegates = $api->getDelegates()->getResult();
-		$burnedCoinsSEM = bcmul(sizeof($delegates), DELEGATE_FEE_SEM);
+        $delegates = $api->getDelegates()->getResult();
+        $burnedCoinsSEM = bcmul(sizeof($delegates), DELEGATE_FEE_SEM);
 
-		return bcsub(bcadd($blockRewardsSEM, PREMINE_SEM), $burnedCoinsSEM);
-	});
+        return bcsub(bcadd($blockRewardsSEM, PREMINE_SEM), $burnedCoinsSEM);
+    });
 
-	// supply summary
+    // supply summary
     $router->get('/supply-summary', function (SemuxApi $api, Cache $cache) use ($router) {
         // total supply
         $maxSEM = "100000000";
